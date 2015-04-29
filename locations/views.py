@@ -147,7 +147,7 @@ class LocationDiscussionCreate(LoginRequiredMixin, CreateView):
 
     def get(self, request, *args, **kwargs):
         slug = kwargs['slug']
-        self.parent_object = Location.objects.get(slug=slug) 
+        self.parent_object = Location.objects.get(slug=slug)
         ctx = {
                 'title': _('Create new discussion'),
                 'location': self.parent_object,
@@ -173,7 +173,7 @@ class LocationDiscussionCreate(LoginRequiredMixin, CreateView):
         except Exception:
             # FIXME: silent fail, powinna być flash message
             pass
-        return redirect(reverse('locations:topic', 
+        return redirect(reverse('locations:topic',
             kwargs = {
                 'place_slug': obj.location.slug,
                 'slug': obj.slug,
@@ -235,7 +235,7 @@ class LocationFollowersList(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(LocationFollowersList, self).get_context_data(**kwargs)
-        
+
         followers = self.object.users.all()
         max_per_page = settings.LIST_PAGINATION_LIMIT
         paginator    = Paginator(followers, max_per_page)
@@ -252,7 +252,7 @@ class LocationFollowersList(DetailView):
             context['navigation'] = False
         else:
             context['navigation'] = True
-            
+
         context['title'] = self.object.name + ', ' + _("Followers")
         context['is_moderator'] = is_moderator(self.request.user, self.object)
         context['top_followers'] = self.object.most_active_followers()
@@ -344,6 +344,26 @@ class LocationListView(ListView):
 class LocationDetailView(LocationViewMixin):
     """ Detailed location view. """
     template_name = 'locations/location_detail.html'
+
+    def get(self, request, slug, tag=None):
+        location = get_object_or_404(Location, slug=slug)
+        t_filter = TagFilter(location)
+        tags = t_filter.get_items()
+        items = []
+
+        if tag:
+            try:
+                tag = Tag.objects.get(slug=tag)
+                all_items = tag.taggit_taggeditem_items.all()
+            except Tag.DoesNotExist:
+                all_items = []
+            items = [x.content_object for x in all_items if x.content_object.location==location]
+
+        return render(request, self.template_name, {
+                'location': location,
+                'items'   : items,
+                'tags'    : [x for x in tags][:100],
+            })
 
 
 class LocationActionsView(LocationViewMixin):
@@ -500,7 +520,7 @@ class LocationContentSearch(View):
 class LocationContentFilter(View):
     """
     A content filter by category site.This type of filtering is
-    useful only for certain types of content. Same sa above, we 
+    useful only for certain types of content. Same sa above, we
     only gather content from the location that the user is currently
     viewing.
     """
@@ -530,7 +550,7 @@ class LocationContentFilter(View):
 class LocationContentDelete(View):
     """
     A universal view that allows the admins and mods to delete the content from
-    "subject" locations. 
+    "subject" locations.
     """
     http_method_names = [u'get', u'post',]
     template_name = 'locations/content-remove.html'
@@ -560,7 +580,7 @@ class InviteUsersView(LoginRequiredMixin, View):
     """
     A view with the from of invite a other users to 'follow' a location in mind.
     It defines the methods that return the form for the modal and send an email
-    to the chosen users. 
+    to the chosen users.
     """
     http_method_names = [u'get', u'post']
     template_name = 'locations/invite-users.html'
@@ -613,57 +633,6 @@ class InviteUsersView(LoginRequiredMixin, View):
                 'level'  : 'danger',
             }
         return HttpResponse(json.dumps(ctx))
-
-
-@login_required
-@require_POST
-def add_follower(request, pk):
-    """ Add user to locations followers. """
-    location = get_object_or_404(Location, pk=pk)
-    user = request.user
-    location.users.add(user)
-    if user != location.creator:
-        notify(user,
-            location.creator,
-            verb=_(u"joined to your location"),
-            key="follower",
-            action_target=location
-        )
-    try:
-        location.save()
-        follow(user, location, actor_only = False)
-        response = {
-            'success': True,
-            'message': _('You follow this location'),
-        }
-    except:
-        response = {
-            'success': False,
-            'message': _('Something, somewhere went terribly wrong'),
-        }
-    return HttpResponse(json.dumps(response))
-
-
-@login_required
-@require_POST
-def remove_follower(request, pk):
-    """ Remove user from locations followers. """
-    location = get_object_or_404(Location, pk=pk)
-    user = request.user
-    location.users.remove(user)
-    try:
-        location.save()
-        unfollow(user, location)
-        response = {
-            'success': True,
-            'message': _('You stop following this location'),
-        }
-    except:
-        response = {
-            'success': False,
-            'message': _('Something, somewhere went terribly wrong'),
-        }
-    return HttpResponse(json.dumps(response))
 
 
 class InviteUsersByEmailView(LoginRequiredMixin, FormView):
