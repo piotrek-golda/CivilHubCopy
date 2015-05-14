@@ -22,24 +22,42 @@ function getMinimalPtr () {
   }
 }
 
+function getStreamFilters ($el) {
+  var filters = {};
+  $el.each(function () {
+    if ($(this).hasClass('active')) {
+      filters[$(this).attr('data-control')] = $(this).attr('data-target');
+    }
+  });
+  filters.haystack = $('#haystack').val();
+  return filters;
+}
+
 $.fn.activityStream = function () {
   return $(this).each(function () {
     var $this = $(this);
     var list = new ActionList({
-      type: $this.attr('data-type'),
+      mode: $this.attr('data-type'),
       ct: $this.attr('data-ct'),
       pk: $this.attr('data-pk')
     });
     function checkSrcrollPosition () {
       var ptr = ($(window).scrollTop() / $(document).height()) * 100;
       if (ptr > getMinimalPtr()) {
-        list.getPage();
+        list.nextPage();
         $(window).off('scroll', checkSrcrollPosition);
         setTimeout(function () {
           $(window).on('scroll', checkSrcrollPosition);
         }, 2000);
       }
     }
+    $('.list-controller').on('click', function (e) {
+      e.preventDefault();
+      $('[data-control="' + $(this).attr('data-control') + '"]')
+        .removeClass('active');
+      $(this).addClass('active');
+      list.filter(getStreamFilters($('.list-controller')));
+    });
     $(window).on('scroll', checkSrcrollPosition);
     return this;
   });

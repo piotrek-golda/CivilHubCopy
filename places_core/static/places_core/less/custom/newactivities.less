@@ -12,7 +12,7 @@
 .border-radius(@radius){
   -webkit-border-radius: @radius;
   -moz-border-radius:    @radius;
-  border-radius:         @radius;  
+  border-radius:         @radius;
 }
 //for fake right site in activity
 .container{
@@ -41,11 +41,11 @@
 }
 // @_color in map.less
 .bg-color-news{ background-color: @newscolor; }
-.bg-color-polls{ background-color: @pollscolor; }
-.bg-color-discussions{ background-color: @discussioncolor; }
-.bg-color-projects{ background-color: @projectscolor}
-.bg-color-ideas{ background-color: @ideacolor; }
-.bg-color-places{ background-color: @placecolor; }
+.bg-color-poll{ background-color: @pollscolor; }
+.bg-color-discussion{ background-color: @discussioncolor; }
+.bg-color-socialproject{ background-color: @projectscolor}
+.bg-color-idea{ background-color: @ideacolor; }
+.bg-color-place{ background-color: @placecolor; }
 /************************************/
 .main-content{
   .ac-title:first-child{
@@ -287,8 +287,9 @@ a{
   .timeline-body{
     border-top: 1px solid @border-color-de;
     position: relative;
-    p{ 
+    p, ul, ol{
       margin-bottom: 0;
+      padding: 0;
       img{ .hidden; }
     }
     .title{
@@ -297,7 +298,7 @@ a{
     }
     img,
     .timeline-image{
-      width: 100%;
+      max-width: 100%;
       height: auto;
       margin-bottom: 15px;
     }
@@ -321,6 +322,7 @@ a{
 .menu-box{ 
   padding-top: 20px;
   position: relative;
+  &.bbg{ h3{ border-bottom: 1px solid #bfbfbf; padding-bottom: 5px; } }
   ul.shortcuts{
     list-style: none;
     margin-bottom: 0;

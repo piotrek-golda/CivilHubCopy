@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
-import os, re, StringIO
-from django.core.files.uploadedfile import InMemoryUploadedFile
+import os
+import re
+import StringIO
+
 from PIL import Image
+
 from django.conf import settings
+from django.core.files.uploadedfile import InMemoryUploadedFile
 
 from .image_manager import ImageManager
 
@@ -13,7 +17,7 @@ def rename_background_file(filepath, pref="s_"):
     with location and users in mind) and adds/changes the name for the cropped
     file (prefix). The prefix can be set in any way, but only "s_" will work
     later on in the templates.
-    
+
     TODO: global cropped image prefix.
     """
     path, file = os.path.split(filepath)
@@ -22,7 +26,7 @@ def rename_background_file(filepath, pref="s_"):
 
 def handle_tmp_image(image):
     """
-    A function that allows to "change" the images before they get uploaded and send 
+    A function that allows to "change" the images before they get uploaded and send
     to Django enginge. Used while uploading background images and avatars to create
     temporary files that can be used in ImageField model of Django.
     """
@@ -35,7 +39,7 @@ def handle_tmp_image(image):
 def resize_image(image, size=None):
     """
     The function take the PIL image as an argument and returns the same object
-    but with changed dimensions. The change of dimensions takes place to the 
+    but with changed dimensions. The change of dimensions takes place to the
     maximum width.
     """
     max_w, max_h = settings.BACKGROUND_IMAGE_SIZE if size is None else size
@@ -58,7 +62,7 @@ def get_fieldname(instance):
     """
     A Method that takes an instance of an object as an argument and returns the
     correct name of the filed that stores the background image. Works for UserProfile
-    model and Location. 
+    model and Location.
     """
     field_names = ('background_image', 'image')
     fieldname = None
@@ -85,7 +89,7 @@ def crop_background(image, pathname, max_size=(270,150)):
     width, height = image.getdata().size
     new_width     = int(width * float(max_h)/float(height))
     startx        = int((new_width - max_w) / 2)
-    
+
     image = image.resize((new_width, max_h), Image.ANTIALIAS)
     box = (startx, 0, startx + max_w, max_h)
     image = image.crop(box)
@@ -113,7 +117,7 @@ def delete_background_image(sender, instance, **kwargs):
     A Method that deletes the background image for location and user profile models
     """
     fieldname = get_fieldname(instance)
-    
+
     if u'nowhere.jpg' in fieldname or u'background.jpg' in fieldname:
         return False
 
@@ -252,3 +256,62 @@ def adjust_uploaded_image(sender, instance, **kwargs):
     image.save("{}_thumbnail@2x.jpg".format(filename), 'JPEG')
     image = resize_image(base_image, (t_width, t_height))
     image.save("{}_thumbnail.jpg".format(filename), 'JPEG')
+
+
+# Functions and methods for ContentObjectGallery and ContentObjectPicture
+# ------------------------------------------------------------------------------
+
+
+def fix_path(filepath, size='BIG'):
+    """
+    Returns path to fixed images (i.e. images with proper suffix) based on
+    full path to image provided as argument.
+    """
+    path_parts = filepath.split('/')
+    name = path_parts.pop()
+    size_prefix = "%dx%d_" % settings.CO_THUMB_SIZES.get(size.upper())
+    path_parts.append(size_prefix + name)
+    return "/".join(path_parts)
+
+
+def crop(image, max_size):
+    """ Takes PIL image and tuple with width and height and performs "smart cut".
+    """
+    max_w, max_h = max_size
+    width, height = image.getdata().size
+
+    # Find ratio
+    if height > width:
+        ratio = float(max_w)/float(width)
+        image = image.resize((max_w, int(height*ratio)), Image.ANTIALIAS)
+        box = (0, 0, max_w, max_h)
+    else:
+        ratio = float(max_h)/float(height)
+        new_width = int(width*ratio)
+        image = image.resize((new_width, max_h), Image.ANTIALIAS)
+        start_x = 0
+        x_factor = max_w
+        if new_width > max_w:
+            start_x = int((float(new_width)-float(max_w))/2)
+        if new_width < max_w:
+            nratio = float(max_w)/float(new_width)
+            cw, ch = image.getdata().size
+            image = image.resize((max_w, int(float(ch)*nratio)), Image.ANTIALIAS)
+        stop_x = start_x + x_factor
+        box = (start_x, 0, stop_x, max_h)
+
+    return image.crop(box)
+
+
+def generate_thumbs(filepath):
+    """ Creates thumbs for all selected sizes for ContentObjectPicture.
+    """
+    image = Image.open(filepath)
+
+    # First convert all uploaded originals to JPG format
+    image = image.convert('RGB')
+    image.save(filepath, 'JPEG')
+
+    for label, size in settings.CO_THUMB_SIZES.iteritems():
+        thumb = crop(image.copy(), size)
+        thumb.save(fix_path(filepath, label), 'JPEG')

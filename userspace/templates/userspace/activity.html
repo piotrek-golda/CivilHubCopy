@@ -1,12 +1,12 @@
 {% extends 'places_core/base.html' %}
-{% load staticfiles i18n postman_tags civil_tags actstream_tags %}{% postman_unread as unread_count %}
+{% load staticfiles i18n postman_tags civil_tags actstream_tags %}
 
 {% block require_scripts %}
 <script>window.API_URL = "/api-userspace/activity/";</script>
 <script>window.USER_ID = "{{ user.pk }}";</script>
 <script>window.LOCATION_ID = "{{ user.pk }}";</script>
 <script>window.CONTENT_API_URL = "/api-userspace/contents/";</script>
-<script src="{% static 'places_core' %}/js/{% js_path %}/userspace-activity.js"></script>
+<script src="{% module_path 'userspace-activity' %}"></script>
 {% endblock %}
 
 {% block title %}{% trans "Your feed" %}{% endblock %}
@@ -22,12 +22,13 @@
           <div class="ac-head-user-name display-ib-m"><a href="{{ user.profile.get_absolute_url }}">{{ user.profile }}</a></div>
         </div>
         <ul class="ac-user-list list-unstyled">
-          <li><a href="/messages/inbox/"><span class="fa fa-envelope-o ac-icon20"></span> {% trans "Messages" %} <span class=" pull-right badge badge-green">{% if unread_count %}<span class="badge custom-badge-indicator">{{ unread_count }}</span>{% else %} 0 {% endif %}</span></a></li>
-          <li><a href="{% url 'user:locations' user.pk %}"><span class="small-icon-place ac-icon20"></span> {% trans "Places" %} <span class=" pull-right badge badge-blue">{{ user.profile.followed_locations|length }}</span></a></li>
+          {% postman_unread as unread_count %}
+          <li><a href="/messages/inbox/"><span class="fa fa-envelope-o ac-icon20"></span> {% trans "Messages" %} <span class=" pull-right badge badge-green">{% if unread_count %}{{ unread_count }}</span>{% else %} 0 {% endif %}</span></a></li>
+          <li><a href="{% url 'user:locations' user.profile.clean_username %}"><span class="small-icon-place ac-icon20"></span> {% trans "Places" %} <span class=" pull-right badge badge-blue">{{ user.profile.followed_locations|length }}</span></a></li>
           <li><span class="fa fa-heart-o ac-icon20"></span> {% trans "Points" %}: {{ user.profile.rank_pts }}</li>
         </ul>
       </div>
-      <div class="hotbox main-content p-reset" data-param="uid" data-value="{{ user.pk }}"><div class="ac-title"><span class="badge badge-btn">10</span>{% trans "Hot news" %}</div></div>
+      <div class="hotbox main-content p-reset" data-param="uid" data-value="{{ user.pk }}"><div class="ac-title"><span class="badge badge-btn">0</span>{% trans "Popular entries" %}</div></div>
     </div>
     <div class="col-sm-6 mt25 no-float">
       {% if user.is_authenticated %}<div class="wrapper-timeline">

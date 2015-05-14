@@ -17,6 +17,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import python_2_unicode_compatible
 
 from actstream.models import model_stream
+from places_core.helpers import sanitizeHtml
 from places_core.storage import OverwriteStorage, ReplaceStorage
 from gallery.image_manager import ImageManager as IM
 from gallery.image import resize_background_image, delete_background_image, \
@@ -242,12 +243,11 @@ class Location(models.Model, BackgroundModelMixin):
         self.parent_list = ",".join([str(x)
                                      for x in self.get_parent_id_list()])
         # We generate the appropriate slug
-        if not self.slug:
-            slug_entry = slugify('-'.join([self.name, self.country_code]))
-            chk = Location.objects.filter(slug__icontains=slug_entry).count()
-            if chk:
-                slug_entry = slug_entry + '-' + str(chk)
-            self.slug = slug_entry
+        slug_entry = slugify('-'.join([self.name, self.country_code]))
+        chk = len(Location.objects.filter(slug=slug_entry).exclude(pk=self.pk))
+        if chk:
+            slug_entry = slug_entry + '-' + str(chk)
+        self.slug = slug_entry
         # We check whether the image has changed and if needed, we delete the old one
         # FIXME: we are using signal for now, this is no longer necessary and deprecated.
         try:
@@ -280,6 +280,16 @@ class Location(models.Model, BackgroundModelMixin):
                 self.parent.get_parent_chain(parents, response)
         return reversed(parents)
 
+    def parents(self, parents=None):
+        if parents is None:
+            parents = []
+        if self.parent is not None:
+            parents.append(self.parent)
+            if self.parent.parent is not None:
+                self.parent.parents(parents)
+        return parents
+
+
     def get_ancestor_chain(self, ancestors=None, response='JSON'):
         """
         Get all sublocations and return dictionary of name - url pairs. The
@@ -311,7 +321,7 @@ class Location(models.Model, BackgroundModelMixin):
     def get_parents(self):
         if self.parent_list is None:
             return []
-        return [int(x) for x in self.parent_list.split(',')]
+        return [int(x) for x in self.parent_list.split(',') if x]
 
     def get_children_id_list(self, ids=None):
         """ Returns all id's of sublocations for this location. """
@@ -376,37 +386,28 @@ class Location(models.Model, BackgroundModelMixin):
         TODO: select content type/content types to choose from.
         FIXME: this is REALLY ugly...
         """
-        content_type_list = {
-            ContentType.objects.get(app_label='ideas',
-                                    model='idea').pk: [
-                                        int(x[0])
-                                        for x in self.idea_set.values_list('pk')
-                                    ],
-            ContentType.objects.get(app_label='polls',
-                                    model='poll').pk: [
-                                        int(x[0])
-                                        for x in self.poll_set.values_list('pk')
-                                    ],
-            ContentType.objects.get(app_label='topics',
-                                    model='discussion').pk:
-            [int(x[0]) for x in self.discussion_set.values_list('pk')],
-            ContentType.objects.get(app_label='projects',
-                                    model='socialproject').pk: [
-                                        int(x[0])
-                                        for x in self.idea_set.values_list('pk')
-                                    ],
-            ContentType.objects.get(app_label='gallery',
-                                    model='locationgalleryitem').pk: [
-                                        int(x[0])
-                                        for x in self.pictures.values_list('pk')
-                                    ],
-            ContentType.objects.get(app_label='blog',
-                                    model='news').pk: [
-                                        int(x[0])
-                                        for x in self.news_set.values_list('pk')
-                                    ],
-        }
-        return content_type_list
+        idea_key = ContentType.objects.get(app_label='ideas', model='idea').pk
+        poll_key = ContentType.objects.get(app_label='polls', model='poll').pk
+        discussion_key = ContentType.objects.get(app_label='topics', model='discussion').pk
+        project_key = ContentType.objects.get(app_label='projects', model='socialproject').pk
+        gallery_key = ContentType.objects.get(app_label='gallery', model='locationgalleryitem').pk
+        blog_key = ContentType.objects.get(app_label='blog', model='news').pk
+
+        items = {}
+        items[idea_key] = [x[0] for x in self.idea_set.values_list('pk')]
+        items[poll_key] = [x[0] for x in self.poll_set.values_list('pk')]
+        items[discussion_key] = [x[0] for x in self.discussion_set.values_list('pk')]
+        items[gallery_key] = [x[0] for x in self.pictures.values_list('pk')]
+        items[blog_key] = [x[0] for x in self.news_set.values_list('pk')]
+
+        for l in self.location_set.all():
+            items[idea_key] = items[idea_key] + [x[0] for x in l.idea_set.values_list('pk')]
+            items[poll_key] = items[poll_key] + [x[0] for x in l.poll_set.values_list('pk')]
+            items[discussion_key] = items[discussion_key] + [x[0] for x in l.discussion_set.values_list('pk')]
+            items[gallery_key] = items[gallery_key] + [x[0] for x in l.pictures.values_list('pk')]
+            items[blog_key] = items[blog_key] + [x[0] for x in l.news_set.values_list('pk')]
+
+        return items
 
     def __str__(self):
         lang = get_language().split('-')[0]

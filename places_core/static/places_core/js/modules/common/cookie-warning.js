@@ -14,7 +14,9 @@ function ($, _, utils, html) {
 "use strict";
 
 function showCookieWarning () {
-  console.log(html);
+  if (utils.getCookie('cookie_msg') && CivilApp.debug) {
+    return;
+  }
   $('#cookie-msg').prepend(_.template(html), {})
     .hide().fadeIn('slow');
   $('#accept-button').click(function () {
@@ -25,8 +27,6 @@ function showCookieWarning () {
   });
 }
 
-if (!utils.getCookie('cookie_msg') && !CivilApp.debug) {
-  showCookieWarning();
-}
+$(document).ready(showCookieWarning);
 
 });

@@ -345,25 +345,11 @@ class LocationDetailView(LocationViewMixin):
     """ Detailed location view. """
     template_name = 'locations/location_detail.html'
 
-    def get(self, request, slug, tag=None):
-        location = get_object_or_404(Location, slug=slug)
-        t_filter = TagFilter(location)
-        tags = t_filter.get_items()
-        items = []
-
-        if tag:
-            try:
-                tag = Tag.objects.get(slug=tag)
-                all_items = tag.taggit_taggeditem_items.all()
-            except Tag.DoesNotExist:
-                all_items = []
-            items = [x.content_object for x in all_items if x.content_object.location==location]
-
-        return render(request, self.template_name, {
-                'location': location,
-                'items'   : items,
-                'tags'    : [x for x in tags][:100],
-            })
+    def get_context_data(self, **kwargs):
+        self.object = self.get_object()
+        context = super(LocationDetailView, self).get_context_data(**kwargs)
+        context['tags'] = TagFilter(self.object).get_items()
+        return context
 
 
 class LocationActionsView(LocationViewMixin):
@@ -452,9 +438,14 @@ class UpdateLocationView(LocationAccessMixin, UpdateView):
         return context
 
     def form_valid(self, form):
-        """ We have to cleanup old markers to save changes. """
+        # We have to cleanup old markers to save changes.
         for mp in MapPointer.objects.for_model(form.instance):
             mp.delete()
+        lang = translation.get_language_from_request(self.request)
+        # Update translation in editing user's language
+        for an in form.instance.names.filter(language=lang):
+            an.altername = form.instance.name
+            an.save()
         return super(UpdateLocationView, self).form_valid(form)
 
 
@@ -690,3 +681,61 @@ class PDFInviteGenerateView(SingleObjectMixin, PDFTemplateView):
     def get(self, request, slug):
         self.object = Location.objects.get(slug=slug)
         return super(PDFInviteGenerateView, self).get(request, slug)
+
+
+class ModeratorListAccessMixin(LocationContextMixin, View):
+    """
+    """
+    def dispatch(self, *args, **kwargs):
+        if not self.request.user.is_superuser:
+            raise PermissionDenied
+        self.location = self.get_current_location()
+        return super(ModeratorListAccessMixin, self).dispatch(*args, **kwargs)
+
+    def get_success_url(self):
+        return reverse('locations:manage-moderators', kwargs={
+            'location_slug': self.location.slug, })
+
+
+class ManageModeratorsView(ModeratorListAccessMixin):
+    """ Superuser may grant or revoke moderator status for other users.
+    """
+    template_name = 'locations/moderator_list.html'
+    form_class = InviteUsersByEmail
+
+    def get_context_data(self):
+        context = super(ManageModeratorsView, self).get_context_data()
+        context['moderators'] = [x for x in User.objects.all()\
+                                if self.location in x.profile.mod_areas.all()]
+        return context
+
+    def get(self, request, **kwargs):
+        context = self.get_context_data()
+        context['form'] = self.form_class()
+        return render(request, self.template_name, context)
+
+    def post(self, request, **kwargs):
+        form = self.form_class(request.POST)
+        if not form.is_valid():
+            context = self.get_context_data()
+            context['form'] = form
+            return render(request, self.template_name, context)
+        for user in User.objects.filter(email__in=form.cleaned_data['emails']):
+            if not self.location in user.profile.mod_areas.all():
+                user.profile.mod_areas.add(self.location)
+                user.profile.save()
+                notify(self.request.user, user,
+                    verb=_(u"Granted you moderator access to"),
+                    action_target=self.location)
+        messages.add_message(request, messages.SUCCESS, _(u"Success"))
+        return redirect(self.get_success_url())
+
+
+class RemoveModeratorView(ModeratorListAccessMixin):
+    """ Delete moderators using list.
+    """
+    def post(self, request, **kwargs):
+        user = get_object_or_404(User, pk=request.POST.get('user_id'))
+        if self.location in user.profile.mod_areas.all():
+            user.profile.mod_areas.remove(self.location)
+        return redirect(self.get_success_url())

@@ -5,10 +5,10 @@
     text-align: center;
     font-style: italic
 }
-.custom-logolike {
+/*.custom-logolike {
     display: none;
     float: right
-}
+}*/
 .custom-centered {
     margin: 0 auto;
     text-align: center
@@ -82,10 +82,10 @@
 .custom-tablelike:hover .entry-controls {
     display: block
 }
-.user-profile-link {
+/*.user-profile-link {
     display: none !important
-}
-.navbar-avatar {
+}*/
+/*.navbar-avatar {
     display: none !important;
     width: 30px;
     height: 30px;
@@ -93,7 +93,7 @@
     border-radius: 3px;
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px
-}
+}*/
 
 #alert-area {
     position: fixed;
@@ -108,15 +108,15 @@
 #alert-area:hover {
     opacity: 1
 }
-.errorlist {
+/*.errorlist {
     margin: 0;
     padding: 0;
     list-style-type: none
-}
-.hidden-form {
+}*/
+/*.hidden-form {
     display: none
-}
-.custom-sidebar-nav {
+}*/
+/*.custom-sidebar-nav {
     list-style-type: none;
     background: #efefef;
     border-radius: 5px;
@@ -126,11 +126,11 @@
     -webkit-box-shadow: 7px 7px 5px 0 rgba(50,50,50,.75);
     -moz-box-shadow: 7px 7px 5px 0 rgba(50,50,50,.75);
     box-shadow: 7px 7px 5px 0 rgba(50,50,50,.75)
-}
-.custom-sidebar-nav > li {
+}*/
+/*.custom-sidebar-nav > li {
     cursor: pointer
-}
-@media (min-width: 768px) {
+}*/
+/*@media (min-width: 768px) {
     .custom-logolike {
         display: block
     }
@@ -149,35 +149,34 @@
     .user-hidden-link {
         display: none !important
     }
-}
+}*/
+
 .add-comment {
     margin-bottom: 20px
 }
-.current-user-comment-avatar {
+.current-user-avatar60 {
     width: 60px;
     height: 60px;
-    border-radius: 4px
+    .border-radius(50%);
 }
-.comment a {
-    color: #8c8c8c
-}
-.comment .comment-row {
+/*.comment .comment-row {
     position: relative;
     margin: 20px 0 0
 }
 .comment .comment-row.comment-content {
     margin: 10px 0
-}
-.comment .comment-avatar-col {
+}*/
+/*.comment .comment-avatar-col {
     width: 40px;
     min-width: 40px;
     max-width: 40px;
     text-align: left
-}
-.comment .comment-author-name {
-    color: #0087ff
-}
-.comment .comment-author-avatar {
+}*/
+/*.comment .comment-author-name {
+  color: #0087ff;
+  font-size: 12px;
+}*/
+/*.comment .comment-author-avatar {
     float: left;
     width: 40px;
     height: 40px;
@@ -188,12 +187,15 @@
     -webkit-border-radius: 50%;
     border: 1px solid #eee;
 
-}
-.comment .comment-date-from-now {
+}*/
+/*.comment .comment-date-from-now {
     color: #8c8c8c;
     display: inline-block;
     //margin-left: 15px
-}
+}*/
+
+.comment-votes-detail{ display: none; } // dla tego nizej
+/* Narazie to nie funkcjonuje warto zostawic.
 .comment .comment-votes-detail {
     display: none;
     padding: 10px;
@@ -222,17 +224,14 @@
     font-size: 20px;
     text-align: center
 }
-.comment .comment-content {
-    //margin: 15px 0
-}
 .comment .badge {
     cursor: pointer
-}
-.comment .comment-controls {
-    opacity: 0;
-    float: right;
-    transition: all .3s
-}
+}*/
+/*.comment .comment-content {
+    //margin: 15px 0
+}*/
+
+
 .uploader-selected-item {
     border: 1px solid red
 }
@@ -246,18 +245,14 @@
 .user-thumbnail {
     width: 35px;
     height: 35px;
-    display: inline-block
+    display: inline-block;
 }
 .custom-navbar {
     margin-bottom: 0;
     margin-top: 0;
     border-radius: 0
 }
-#filter-navbar {
-    margin-top: -20px;
-    border-top-left-radius: 0;
-    border-top-right-radius: 0
-}
+
 .idea-entry .idea-votes {
     padding-top: 25px;
     padding-bottom: 25px;

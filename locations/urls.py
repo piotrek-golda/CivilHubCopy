@@ -7,7 +7,7 @@ from polls.views import PollDetails, PollResults, PollListView
 from gallery.views import LocationGalleryView, PlacePictureView, \
                            LocationGalleryCreateView, location_gallery_delete, \
                            LocationGalleryUpdateView
-from projects import views as project_views
+from projects.views import base as project_views
 import api
 from locations.views import *
 from staticpages.views import PageView
@@ -27,6 +27,8 @@ router.add_api_view('autocomplete', url(r'^autocomplete/', api.LocationSearchAPI
 urlpatterns = patterns('',
     url(r'^create/', CreateLocationView.as_view(), name='create'),
     url(r'^places/', LocationListView.as_view(), name='index'),
+    url(r'^(?P<location_slug>[\w-]+)/moderators/remove/', RemoveModeratorView.as_view(), name='remove-moderator'),
+    url(r'^(?P<location_slug>[\w-]+)/moderators/', ManageModeratorsView.as_view(), name='manage-moderators'),
     url(r'^(?P<slug>[\w-]+)/$', LocationDetailView.as_view(), name='details'),
     # sub-location list
     url(r'^(?P<slug>[\w-]+)/sublocations/$', SublocationList.as_view(), name='sublocations'),
@@ -38,6 +40,8 @@ urlpatterns = patterns('',
 
     # IDEAS
     url(r'^(?P<slug>[\w-]+)/ideas/create/', LocationIdeaCreate.as_view(), name='new_idea'),
+    url(r'^(?P<location_slug>[\w-]+)/ideas/(?P<slug>[\w-]+)/news/create/', idea_views.IdeaNewsCrete.as_view(), name='idea-news-create'),
+    url(r'^(?P<location_slug>[\w-]+)/ideas/(?P<slug>[\w-]+)/news/', idea_views.IdeaNewsList.as_view(), name='idea-news-list'),
     url(r'^(?P<place_slug>[\w-]+)/ideas/(?P<slug>[\w-]+)/', idea_views.IdeasDetailView.as_view(), name='idea_detail'),
     url(r'^(?P<location_slug>[\w-]+)/ideas/', idea_views.IdeasListView.as_view(), name='ideas'),
 

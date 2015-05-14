@@ -3,7 +3,7 @@ from django.conf.urls import patterns, url
 import views
 
 urlpatterns = patterns('',
-    url(r'^contact/', views.TopLevelArticleView.as_view(article_slug='contact'), name='contact'),
+    #url(r'^contact/', views.TopLevelArticleView.as_view(article_slug='contact'), name='contact'),
     url(r'^cookies/', views.TopLevelArticleView.as_view(article_slug='cookies'), name='cookies'),
     url(r'^privacy/', views.TopLevelArticleView.as_view(article_slug='privacy'), name='privacy'),
     url(r'^about-us/', views.TopLevelArticleView.as_view(article_slug='about-us'), name='about-us'),
@@ -32,4 +32,8 @@ urlpatterns = patterns('',
     url(r'^about-us-two/', views.TopLevelArticleView.as_view(article_slug='about-us-two', template_name='articles/clear.html'), name='about-us-two'),
     url(r'^open-source/', views.TopLevelArticleView.as_view(article_slug='open-source', template_name='articles/clear.html'), name='open-source'),
     url(r'^licence/', views.TopLevelArticleView.as_view(article_slug='licence', template_name='articles/licence.html'), name='licence'),
+    url(r'^events/', views.TopLevelArticleView.as_view(article_slug='events', template_name='articles/events.html'), name='events'),
+    url(r'^meetup-szczecin-1/', views.TopLevelArticleView.as_view(article_slug='meetup-szczecin-1', template_name='articles/events.html'), name='meetup-szczecin-1'),
+    url(r'^hackatlon-warszawa-1/', views.TopLevelArticleView.as_view(article_slug='hackatlon-warszawa-1', template_name='articles/events.html'), name='hackatlon-warszawa-1'),
+    url(r'^home-k/', views.TopLevelArticleView.as_view(article_slug='home-k', template_name='articles/home-k.html'), name='home-k'),  
 )

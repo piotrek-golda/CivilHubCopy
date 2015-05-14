@@ -1,0 +1,6 @@
+{% extends 'locations/index.html' %}{% load i18n %}
+{% block content %}<div class="main-content create-form newFormCreate"><h3>{% trans "Add new picture" %}</h3><form method="post" action="{% url 'gallery:picture-upload' gallery.pk %}" enctype="multipart/form-data" class="form-horizontal">
+  {% csrf_token %}{{ form.as_p }}
+  <button type="submit" class="btn-greenBig">{% trans "Save" %}</button>
+  <div class="hidden">{{ gallery.pk }}</div>
+</form></div>{% endblock %}

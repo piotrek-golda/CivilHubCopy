@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 from django import forms
+from django.utils.translation import ugettext as _
 
 from etherpad.models import Pad
+from gallery.models import ContentObjectGallery, ContentObjectPicture
 from organizations.models import Organization
 from places_core.forms import BootstrapBaseForm
 
-from .models import SocialProject, TaskGroup, Task, SocialForumTopic, SocialForumEntry
+from .models import Attachment, SocialProject, TaskGroup, Task, \
+                    SocialForumTopic, SocialForumEntry
 
 
 class CreateProjectForm(forms.ModelForm, BootstrapBaseForm):
@@ -151,3 +154,47 @@ class ProjectNGOForm(forms.Form):
         if not project in organization.projects.all():
             organization.projects.add(project)
         return organization
+
+
+class ProjectGalleryForm(forms.ModelForm):
+    """ Simplified form for gallery creation.
+    """
+    class Meta:
+        model = ContentObjectGallery
+        exclude = ('dirname', )
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'content_type': forms.HiddenInput(),
+            'object_id': forms.HiddenInput()
+        }
+
+
+class ProjectPictureForm(forms.ModelForm):
+    """ This form allows users to upload gallery items.
+    """
+    class Meta:
+        model = ContentObjectPicture
+        exclude = ('gallery', 'uploaded_by', )
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'description': forms.Textarea(
+                attrs={'class': 'form-control custom-wysiwyg-no-gallery'})
+        }
+
+
+MAX_FILE_SIZE = 4 # In megabytes
+
+class AttachmentUploadForm(forms.ModelForm):
+    """ Upload attachment files for projects.
+    """
+    class Meta:
+        model = Attachment
+        exclude = ('mime_type', 'uploaded_by', )
+        widgets = {'project': forms.HiddenInput(), }
+
+    def clean_attachment(self):
+        attachment = self.cleaned_data['attachment']
+        if attachment._size > MAX_FILE_SIZE * 1024 * 1024:
+            err_msg = _(u"File is too big (%d MB)" % MAX_FILE_SIZE)
+            raise forms.ValidationError(err_msg)
+        return attachment

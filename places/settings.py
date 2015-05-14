@@ -113,6 +113,7 @@ INSTALLED_APPS = (
     'organizations', # Manage non-governmental organizations (NGO)
     'activities',  # Manage activity streams and different action hooks
     'simpleblog',  # Simplified blog functionality for NGO and projects
+    'guides',
 
     'raven.contrib.django.raven_compat',
     'analytical',
@@ -131,7 +132,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.request',
     'django.core.context_processors.i18n',
 )
-TEMPLATE_DIRS = [os.path.join(BASE_DIR, 'templates'),]
+TEMPLATE_DIRS = [os.path.join(BASE_DIR, 'templates'), ]
 
 
 MIDDLEWARE_CLASSES = (
@@ -207,6 +208,7 @@ POSTMAN_DISALLOW_ANONYMOUS = True
 POSTMAN_AUTO_MODERATE_AS = True
 POSTMAN_DISABLE_USER_EMAILING = True
 POSTMAN_DISALLOW_MULTIRECIPIENTS = True
+POSTMAN_SHOW_USER_AS = lambda u: u.get_full_name()
 
 
 # Social Auth
@@ -366,6 +368,8 @@ EMAIL_USE_TLS       = False
 # Enter real email address here in future
 EMAIL_DEFAULT_ADDRESS = 'noreply@civilhub-mail.org'
 DEFAULT_FROM_EMAIL = 'noreply@civilhub-mail.org'
+# Where to redirect contact messages
+CONTACT_EMAIL_ADDRESS = 'grzewarz@gmail.com'
 
 # Email settings for testing purposes
 EMAIL_BACKEND       = "djmail.backends.default.EmailBackend"
@@ -404,6 +408,13 @@ THUMB_SIZES = [
 # Maximum size for pictures in gallery. Bigger pictures will be thumbnailed.
 IMAGE_MAX_SIZE = (1024,1024)
 GALLERY_THUMB_SIZE = (270,170)
+
+# Sizes for thumbnails related to ContentObjectGalleries
+CO_THUMB_SIZES = {
+    'BIG': (570, 360),
+    'SMALL': (60, 60),
+}
+
 # Maximum size for location and profile pages background images
 BACKGROUND_IMAGE_SIZE = (1920, 300)
 # Settings for user avatar pictures

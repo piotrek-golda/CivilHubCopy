@@ -9,7 +9,7 @@
         <span class="icon-bar"></span>
       </button>
       <a id="logo" class="navbar-brand" href="/activity/"><img src="{% static 'places_core/img/logo.png' %}" alt="Logo CivilHub"><span class="logo_beta">Beta</span></a>
-    </div>    
+    </div>
     <div class="collapse navbar-collapse" id="bs-navbar-collapse">
       <div class="navbar-top-search hidden" id="search-one">
         <form class="navbar-form navbar-right custom-main-search" role="search" method="get" action="{% url 'search:haystack_search' %}">
@@ -27,7 +27,6 @@
             </form>
           </div>
         </li>
-
         {% if user.is_authenticated %}<li class="dropdown">
           <a class="dropdown-toggle custom-tooltip-right onlyIcon" data-toggle="dropdown" href="#" title="{% trans "Support" %}">
             <span class="support-icon"></span><span class="rwdShow">{% trans "Support" %}</span>
@@ -39,12 +38,12 @@
             <li><a href="/idea-to-law/">{% trans "Law changes" %}</a></li>
             <li><a href="/idea-to-project/">{% trans "Idea to Projects" %}</a></li>
             <li class="divider"></li>
-            <li class="dropdown-submenu"><a href="#">{% trans "For Cities" %}</a>
+            <li class="dropdown-submenu"><a href="#" data-toggle="dropdown">{% trans "For Cities" %}</a>
               <ul class="dropdown-menu">
                 <li><a href="/for-city-administration/">{% trans "For City Administration" %}</a></li>
               </ul>
             </li>
-            <li class="dropdown-submenu"><a href="">{% trans "For Organizations" %}</a>
+            <li class="dropdown-submenu"><a href="#" data-toggle="dropdown">{% trans "For Organizations" %}</a>
               <ul class="dropdown-menu">
                 <li><a href="/for-organizations/">{% trans "For your Organization" %}</a></li>
               </ul>
@@ -81,7 +80,7 @@
           <ul class="dropdown-menu">
             <li><a href="{{ user.profile.get_absolute_url }}">{% trans "Profile" %}</a></li>
             <li><a href="/invite-friends/">{% trans "Invite friends" %}</a></li>
-            <li><a href="{% url 'user:locations' user.pk %}">{% trans "My Places" %}</a></li>
+            <li><a href="{% url 'user:locations' user.profile.clean_username %}">{% trans "My Places" %}</a></li>
             <li><a href="{% url 'gallery:index' %}">{% trans "Media" %}</a></li>
             <li><a href="{% url 'user:index' %}">{% trans "Edit profile" %}</a></li>
             <li class="divider"></li>
@@ -128,11 +127,11 @@
           </a>
           <ul class="dropdown-menu bookmarks-no-list">
             <li class="divider"></li>
-            <li class="bookmark-no-list"><a href="{% url 'bookmarks-list' %}">{% trans "Manage" %}</a></li>
+            <li><a href="{% url 'bookmarks-list' %}">{% trans "Manage" %}</a></li>
           </ul>
         </li>
-        <li>                                                           
-          <a href="{% url 'postman_inbox' %}" class="onlyIcon custom-tooltip-right" title="{% trans "Messages" %}" >
+        <li>
+          <a href="{% url 'postman_inbox' %}" class="onlyIcon custom-tooltip-right" title="{% trans "Messages" %}">
             <span class="message-box fa fa-envelope-o"><span class="rwdShow">{% trans "Messages" %}</span></span>
             {% if unread_count %}<span class="badge custom-badge-indicator">{{ unread_count }}</span>{% endif %}
           </a>

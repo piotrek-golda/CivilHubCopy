@@ -10,7 +10,15 @@
         margin-top: 0px;
         margin-bottom: 15px;
     }
-    
+    &.newFormCreate{
+      >h3{
+        font-size: 16px;
+        line-height: 26px;
+        margin: -15px -15px 15px;
+        border-bottom: 1px solid #DDD;
+        padding: 5px 20px;
+      }
+    }
     /*
      * Ukrywamy elementy, które zastąpimy Google mapą.
      */
@@ -19,8 +27,8 @@
     label[for=id_latitude],
     label[for=id_longitude] {
         display: none;
-    }  
-    
+    }
+
     /*
      * TODO: to na pewno da się zdefiniować w samym Bootstrapie
      */
@@ -29,27 +37,40 @@
         background: linear-gradient(to bottom,  #269fe4 0%,#1986d9 100%);
         border: 1px solid #407DCD;
         text-shadow: 0px 1px 1px rgba(0, 0, 0, 0.75);
-        
+
     }
-    
-    /* 
-     * Wyświetlanie błędów w alertach - bez tej reguły formularze będą się 
+
+    /*
+     * Wyświetlanie błędów w alertach - bez tej reguły formularze będą się
      * rozpadać.
      */
     .alert {
         clear: both;
     }
-    
+
     .custom-btn-full-width {
         width: 100%;
     }
 }
 
+.form-unstyled{
+  ul{
+    list-style: none;
+    padding: 0;
+  }
+  ul.errorlist{
+    .alert; .alert-danger;
+  }
+  p>label{
+    font-size: 16px;
+    font-weight: 700;
+  }
+}
 
 /*******************************
  * TWORZENIE NOWEJ LOKALIZACJI *
  *******************************/
- 
+
 /*
  * Element wyświetlający aktualnie wybraną miejscowość.
  */
@@ -73,22 +94,22 @@
     margin: 0px;
     padding: 0px;
     overflow-y: auto;
-    
+
     li {
         display: block;
         width: 100%;
-        
+
         &.name-entry {
             height: 30px;
             line-height: 30px;
             padding: 0px 15px;
             cursor: pointer;
-            
+
             &:hover {
                 background-color: #407DCD;
             }
         }
-        
+
         &.filter-entry {
             padding: 5px;
         }
@@ -106,15 +127,22 @@
 }
 .avatarViewIMG{
     width: 40px;
-    height: 40px;  
+    height: 40px;
     img{
-        max-width: 100%;  
-        border-radius: 50%;
-        -moz-border-radius: 50%;
-        -webkit-border-radisu: 50%;
+        max-width: 100%;
+        .border-radius(50%);
     }
 }
 //form bordeR:0
 .border0{
     border: 0 none !important;
+}
+
+
+.picture-input-entry {
+  margin: 10px 0px;
+  padding: 0px none;
+  &:first-of-type {
+    margin: 0px none;
+  }
 }

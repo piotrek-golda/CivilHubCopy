@@ -1,0 +1,556 @@
+# Esperanto translation of django-postman.
+# Copyright (C) 2010 Patrick Samson
+# This file is distributed under the same license as the django-postman package.
+#
+# Translators:
+# Baptiste Darthenay <baptiste+transifex@darthenay.fr>, 2014
+# B E <steleto@gmail.com>, 2014
+msgid ""
+msgstr ""
+"Project-Id-Version: django-postman\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-05-13 00:06+0200\n"
+"PO-Revision-Date: 2014-10-25 12:42+0000\n"
+"Last-Translator: Baptiste Darthenay <baptiste+transifex@darthenay.fr>\n"
+"Language-Team: Esperanto (http://www.transifex.com/projects/p/django-postman/"
+"language/eo/)\n"
+"Language: eo\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: postman/admin.py:30
+msgid "Sender and Recipient cannot be both undefined."
+msgstr "Sendanto kaj ricevanto ne povas esti ambaŭ malplenaj."
+
+#: postman/admin.py:37
+msgid "Visitor's email is in excess."
+msgstr "La retadreso de la vizitanto estas troa."
+
+#: postman/admin.py:42
+msgid "Visitor's email is missing."
+msgstr "La retadreso de la vizitanto mankas."
+
+#: postman/admin.py:48
+msgid "Reading date must be later to sending date."
+msgstr "La dato de la legado devas esti post la dato de la sendado."
+
+#: postman/admin.py:53
+msgid "Deletion date by sender must be later to sending date."
+msgstr ""
+"La dato de la forviŝado de la sendanto devas esti post la dato de la sendado."
+
+#: postman/admin.py:58
+msgid "Deletion date by recipient must be later to sending date."
+msgstr ""
+"La dato de la forviŝado de la ricevanto devas esti post la dato de la "
+"sendado."
+
+#: postman/admin.py:66
+msgid "Response date must be later to sending date."
+msgstr "La dato de la respondo devas esti post la dato de la sendado."
+
+#: postman/admin.py:68
+msgid "The message cannot be replied without having been read."
+msgstr "Por povi respondi la mesaĝon unue vi devas legi ĝin."
+
+#: postman/admin.py:70
+msgid "Response date must be later to reading date."
+msgstr "La dato de la respondo devas esti post la dato de la legado."
+
+#: postman/admin.py:72
+msgid "Response date cannot be set without at least one reply."
+msgstr ""
+"La dato de la respondo ne povas esti agordita sen almenaŭ unu respondo."
+
+#: postman/admin.py:74
+msgid "The message cannot be replied without being in a conversation."
+msgstr "La mesaĝo ne povas esti respondita sen esti en la babilado."
+
+#: postman/admin.py:97 postman/admin.py:178
+#: postman/templates/postman/view.html:5
+msgid "Message"
+msgstr "Mesaĝo"
+
+#: postman/admin.py:102
+msgid "Dates"
+msgstr "Datoj"
+
+#: postman/admin.py:107 postman/admin.py:182
+msgid "Moderation"
+msgstr "Moderaĵo"
+
+#: postman/fields.py:27
+#, python-brace-format
+msgid "Some usernames are unknown or no more active: {users}."
+msgstr "Kelkaj uzantnomoj estas nekonataj aŭ ne plu aktivaj: {users}."
+
+#: postman/fields.py:28
+#, python-brace-format
+msgid ""
+"Ensure this value has at most {limit_value} distinct items (it has "
+"{show_value})."
+msgstr ""
+"Certiĝu, ke tiu ĉi valoro havas maksimume {limit_value} malsamajn erojn (ĝi "
+"havas {show_value})."
+
+#: postman/fields.py:29
+#, python-brace-format
+msgid ""
+"Ensure this value has at least {limit_value} distinct items (it has "
+"{show_value})."
+msgstr ""
+"Certiĝu, ke tiu ĉi valoro havas minimume {limit_value} malsamajn erojn (ĝi "
+"havas {show_value})."
+
+#: postman/fields.py:30
+#, python-brace-format
+msgid "Some usernames are rejected: {users}."
+msgstr "Kelkaj uzantnomoj estis malakceptataj: {users}."
+
+#: postman/fields.py:31 postman/forms.py:72
+#, python-brace-format
+msgid "{username}"
+msgstr "{username}"
+
+#: postman/fields.py:32 postman/forms.py:73
+#, python-brace-format
+msgid "{username} ({reason})"
+msgstr "{username} ({reason})"
+
+#: postman/forms.py:71
+#, python-brace-format
+msgid "Writing to some users is not possible: {users}."
+msgstr "Vi ne povas skribi al kelkaj uzantoj: {users}."
+
+#: postman/forms.py:158 postman/forms.py:171
+msgid "Recipients"
+msgstr "Ricevantoj"
+
+#: postman/forms.py:158 postman/forms.py:171
+#: postman/templates/postman/base_folder.html:33
+#: postman/templates/postman/reply.html:4
+msgid "Recipient"
+msgstr "Ricevanto"
+
+#: postman/forms.py:170
+msgid "Email"
+msgstr "Retadreso"
+
+#: postman/forms.py:187
+msgid "Undefined recipient."
+msgstr "Nedefinita ricevanto."
+
+#: postman/forms.py:209
+msgid "Additional recipients"
+msgstr "Kromaj ricevantoj"
+
+#: postman/forms.py:209
+msgid "Additional recipient"
+msgstr "Kroma ricevanto"
+
+#: postman/management/__init__.py:19
+msgid "Message Rejected"
+msgstr "Mesaĝo Malakceptita"
+
+#: postman/management/__init__.py:19
+msgid "Your message has been rejected"
+msgstr "Via mesaĝo estis malakceptita"
+
+#: postman/management/__init__.py:20
+msgid "Message Received"
+msgstr "Mesaĝo Ricevita"
+
+#: postman/management/__init__.py:20
+msgid "You have received a message"
+msgstr "Vi ricevis mesaĝon"
+
+#: postman/management/__init__.py:21
+msgid "Reply Received"
+msgstr "Respondo Ricevita"
+
+#: postman/management/__init__.py:21
+msgid "You have received a reply"
+msgstr "Vi ricevis respondon"
+
+#: postman/models.py:31
+msgid "Pending"
+msgstr "Pritraktota"
+
+#: postman/models.py:32
+msgid "Accepted"
+msgstr "Akceptita"
+
+#: postman/models.py:33 postman/templates/postman/view.html:13
+msgid "Rejected"
+msgstr "Malakceptita"
+
+#: postman/models.py:248
+msgid "subject"
+msgstr "temo"
+
+#: postman/models.py:249
+msgid "body"
+msgstr "korpo"
+
+#: postman/models.py:250 postman/models.py:332
+msgid "sender"
+msgstr "sendanto"
+
+#: postman/models.py:251 postman/models.py:356
+msgid "recipient"
+msgstr "ricevanto"
+
+#: postman/models.py:252
+msgid "visitor"
+msgstr "vizitanto"
+
+#: postman/models.py:253
+msgid "parent message"
+msgstr "patra mesaĝo"
+
+#: postman/models.py:254
+msgid "root message"
+msgstr "radika mesaĝo"
+
+#: postman/models.py:255
+msgid "sent at"
+msgstr "sendita je"
+
+#: postman/models.py:256
+msgid "read at"
+msgstr "legita je"
+
+#: postman/models.py:257
+msgid "replied at"
+msgstr "respondita je"
+
+#: postman/models.py:258
+msgid "archived by sender"
+msgstr "arkivita de la sendanto"
+
+#: postman/models.py:259
+msgid "archived by recipient"
+msgstr "arkivita de la ricevanto"
+
+#: postman/models.py:260
+msgid "deleted by sender at"
+msgstr "forviŝita de la sendanto"
+
+#: postman/models.py:261
+msgid "deleted by recipient at"
+msgstr "forviŝita de la ricevanto"
+
+#: postman/models.py:263
+msgid "status"
+msgstr "statuso"
+
+#: postman/models.py:265
+msgid "moderator"
+msgstr "moderatoro"
+
+#: postman/models.py:266
+msgid "moderated at"
+msgstr "moderita je"
+
+#: postman/models.py:267
+msgid "rejection reason"
+msgstr "kialo de la malakceptado"
+
+#: postman/models.py:272
+msgid "message"
+msgstr "mesaĝo"
+
+#: postman/models.py:273
+msgid "messages"
+msgstr "mesaĝoj"
+
+#: postman/models.py:384
+msgid "Undefined sender."
+msgstr "Nedifinita sendanto."
+
+#: postman/models.py:532
+msgid "pending message"
+msgstr "pritraktata mesaĝo"
+
+#: postman/models.py:533
+msgid "pending messages"
+msgstr "pritraktata mesaĝoj"
+
+#: postman/templates/admin/postman/pendingmessage/change_form.html:17
+msgid "Please correct the error below."
+msgid_plural "Please correct the errors below."
+msgstr[0] "Bonvolu korekti la suban eraron."
+msgstr[1] "Bonvolu korekti la subajn erarojn."
+
+#: postman/templates/admin/postman/pendingmessage/submit_line.html:6
+msgid "Accept"
+msgstr "Akceptu"
+
+#: postman/templates/admin/postman/pendingmessage/submit_line.html:7
+msgid "Reject"
+msgstr "Malakceptu"
+
+#: postman/templates/postman/archives.html:3
+msgid "Archived Messages"
+msgstr "Arkivitaj mesaĝoj"
+
+#: postman/templates/postman/archives.html:7
+msgid ""
+"Messages in this folder will never be removed. You can use this folder for "
+"long term storage."
+msgstr ""
+"Mesaĝoj en tiu ĉi dosierujo neniam estos forigitaj. Vi povas uzi tiun ĉi "
+"dosierujon por longtempa konservado."
+
+#: postman/templates/postman/base.html:3
+msgid "Messaging"
+msgstr "Mesaĝilo"
+
+#: postman/templates/postman/base.html:12
+msgid "Inbox"
+msgstr "Poŝtkesto"
+
+#: postman/templates/postman/base.html:13
+#: postman/templates/postman/sent.html:3
+msgid "Sent Messages"
+msgstr "Senditaj mesaĝoj"
+
+#: postman/templates/postman/base.html:14
+#: postman/templates/postman/write.html:3
+msgid "Write"
+msgstr "Skribu"
+
+#: postman/templates/postman/base.html:15
+msgid "Archives"
+msgstr "Arkivoj"
+
+#: postman/templates/postman/base.html:16
+msgid "Trash"
+msgstr "Rubujo"
+
+#: postman/templates/postman/base_folder.html:15
+msgid "Sorry, this page number is invalid."
+msgstr "Bedaŭrinde tiu ĉi paĝo ne estas valida."
+
+#: postman/templates/postman/base_folder.html:19
+msgid "by conversation"
+msgstr "laŭ babilado"
+
+#: postman/templates/postman/base_folder.html:20
+msgid "by message"
+msgstr "laŭ mesaĝo"
+
+#: postman/templates/postman/base_folder.html:24
+#: postman/templates/postman/view.html:22
+msgid "Delete"
+msgstr "Forviŝu"
+
+#: postman/templates/postman/base_folder.html:25
+#: postman/templates/postman/view.html:23
+msgid "Archive"
+msgstr "Arkivu"
+
+#: postman/templates/postman/base_folder.html:26
+msgid "Undelete"
+msgstr "Malforviŝu"
+
+#: postman/templates/postman/base_folder.html:31
+msgid "Action"
+msgstr "Ago"
+
+#: postman/templates/postman/base_folder.html:32
+msgid "Sender"
+msgstr "Sendanto"
+
+#: postman/templates/postman/base_folder.html:34
+msgid "Subject"
+msgstr "Temo"
+
+#: postman/templates/postman/base_folder.html:35
+msgid "Date"
+msgstr "Dato"
+
+#: postman/templates/postman/base_folder.html:50
+msgid "g:i A,M j,n/j/y"
+msgstr "G:i,M j,Y-n-j"
+
+#: postman/templates/postman/base_folder.html:57
+msgid "No messages."
+msgstr "Ne estas mesaĝoj."
+
+#: postman/templates/postman/base_write.html:33
+msgid "Send"
+msgstr "Sendu"
+
+#: postman/templates/postman/email_user.txt:1
+msgid "Dear user,"
+msgstr "Kara uzanto,"
+
+#: postman/templates/postman/email_user.txt:3
+#: postman/templates/postman/email_visitor.txt:3
+#, python-format
+msgid "On %(date)s, you asked to send a message to the user '%(recipient)s'."
+msgstr "On %(date)s, vi petis sendi mesaĝon al uzanto '%(recipient)s'."
+
+#: postman/templates/postman/email_user.txt:5
+#: postman/templates/postman/email_visitor.txt:5
+msgid "Your message has been rejected by the moderator"
+msgstr "La moderatoro ne akceptis vian mesaĝon"
+
+#: postman/templates/postman/email_user.txt:5
+#: postman/templates/postman/email_visitor.txt:5
+msgid ", for the following reason:"
+msgstr ", pro la jena kialo:"
+
+#: postman/templates/postman/email_user.txt:9
+#: postman/templates/postman/email_visitor.txt:10
+#, python-format
+msgid "On %(date)s, you sent a message to the user '%(sender)s'."
+msgstr "Je %(date)s, vi sendis mesaĝon al '%(sender)s'."
+
+#: postman/templates/postman/email_user.txt:10
+msgid "Your correspondent has given you an answer."
+msgstr "Via adresito respondis al vi."
+
+#: postman/templates/postman/email_user.txt:11
+#, python-format
+msgid "You have received a copy of a response from the user '%(sender)s'."
+msgstr "Vi ricevis kopion de la respondo de '%(sender)s'."
+
+#: postman/templates/postman/email_user.txt:13
+#, python-format
+msgid "You have received a message from the user '%(sender)s'."
+msgstr "Vi ricevis mesaĝon de '%(sender)s'."
+
+#: postman/templates/postman/email_user.txt:16
+#: postman/templates/postman/email_visitor.txt:14
+msgid "Thank you again for your interest in our services."
+msgstr "Dankon denove por via interesiĝo pri niaj servoj."
+
+#: postman/templates/postman/email_user.txt:17
+#: postman/templates/postman/email_visitor.txt:16
+msgid "The site administrator"
+msgstr "La administranto de la retpaĝo"
+
+#: postman/templates/postman/email_user.txt:19
+#: postman/templates/postman/email_visitor.txt:18
+msgid ""
+"Note: This message is issued by an automated system.\n"
+"Do not reply, this would not be taken into account."
+msgstr ""
+"Noto: La mesaĝo estas parto de aŭtomata sistemo.\n"
+"Bonvolu ne respondi al ĝi, via mesaĝo ne estos ricevita."
+
+#: postman/templates/postman/email_user_subject.txt:1
+#: postman/templates/postman/email_visitor_subject.txt:1
+#, python-format
+msgid "Message \"%(subject)s\" on the site %(sitename)s"
+msgstr "Mesaĝo \"%(subject)s\" sur la retpaĝo %(sitename)s"
+
+#: postman/templates/postman/email_visitor.txt:1
+msgid "Dear visitor,"
+msgstr "Kara vizitanto,"
+
+#: postman/templates/postman/email_visitor.txt:8
+msgid "As a reminder, please find below the content of your message."
+msgstr "Kiel rememorigo, bonvolu rigardi la enhavon de via mesaĝo."
+
+#: postman/templates/postman/email_visitor.txt:11
+msgid "Please find below the answer from your correspondent."
+msgstr "Ĉi tie vi trovas la respondon de via korespondanto."
+
+#: postman/templates/postman/email_visitor.txt:15
+msgid "For more comfort, we encourage you to open an account on the site."
+msgstr "Por pli facila uzado ni proponas al vi registriĝi sur tiu ĉi retpaĝo."
+
+#: postman/templates/postman/inbox.html:3
+msgid "Received Messages"
+msgstr "Ricevitaj mesaĝoj"
+
+#: postman/templates/postman/inbox.html:6
+msgid "Received"
+msgstr "Ricevite"
+
+#: postman/templates/postman/reply.html:3
+#: postman/templates/postman/view.html:25
+#: postman/templates/postman/view.html:28
+#: postman/templates/postman/view.html:31
+msgid "Reply"
+msgstr "Respondo"
+
+#: postman/templates/postman/sent.html:6
+msgid "Sent"
+msgstr "Sendite"
+
+#: postman/templates/postman/trash.html:3
+msgid "Deleted Messages"
+msgstr "Forviŝitaj mesaĝoj"
+
+#: postman/templates/postman/trash.html:10
+msgid ""
+"Messages in this folder can be removed from time to time. For long term "
+"storage, use instead the archive folder."
+msgstr ""
+"Mesaĝoj en tiu ĉi dosierujo povas esti forigitaj de tempo al tempo. Por "
+"longtempa uzado prefere uzu la arkivadon."
+
+#: postman/templates/postman/view.html:5
+msgid "Conversation"
+msgstr "Babilado"
+
+#: postman/templates/postman/view.html:13
+msgid ":"
+msgstr ":"
+
+#: postman/templates/postman/view.html:20
+msgid "Back"
+msgstr "Reen"
+
+#: postman/templatetags/postman_tags.py:50
+msgid "<me>"
+msgstr "mi"
+
+#: postman/utils.py:38
+msgid "> "
+msgstr "> "
+
+#: postman/utils.py:54
+#, python-brace-format
+msgid ""
+"\n"
+"\n"
+"{sender} wrote:\n"
+"{body}\n"
+msgstr ""
+"\n"
+"\n"
+"{sender} skribis:\n"
+"{body}\n"
+
+#: postman/utils.py:64
+#, python-brace-format
+msgid "Re: {subject}"
+msgstr "Re: {subject}"
+
+#: postman/views.py:186
+msgid "Message successfully sent."
+msgstr "Mesaĝo sukcese sendita."
+
+#: postman/views.py:188
+msgid "Message rejected for at least one recipient."
+msgstr "Mesaĝo reĵetita por almenaŭ unu ricevanto."
+
+#: postman/views.py:405
+msgid "Select at least one object."
+msgstr "Elektu almenaŭ unu objekton."
+
+#~ msgid "Messages or conversations successfully archived."
+#~ msgstr "Mesaĝoj aŭ babiladoj sukcese arkivitaj."
+
+#~ msgid "Messages or conversations successfully deleted."
+#~ msgstr "Mesaĝoj aŭ babiladoj sukcese forviŝitaj."
+
+#~ msgid "Messages or conversations successfully recovered."
+#~ msgstr "Mesaĝoj aŭ babiladoj sukcese retrovitaj."

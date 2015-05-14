@@ -10,6 +10,7 @@ from datetime import datetime
 from slugify import slugify
 
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
@@ -17,7 +18,10 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponse, Http404, HttpResponseForbidden
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils.translation import ugettext as _
-from django.views.generic import View, DetailView, ListView, FormView, UpdateView
+from django.views.generic import View, DetailView, DeleteView, ListView,\
+                                 FormView, UpdateView
+from django.views.generic.detail import SingleObjectMixin
+from django.views.generic.edit import CreateView
 
 from actstream import action
 from rest_framework import viewsets
@@ -25,14 +29,18 @@ from rest_framework.response import Response
 
 from comments.models import CustomComment
 from locations.links import LINKS_MAP as links
+from locations.mixins import LocationContextMixin, SearchableListMixin
 from locations.models import Location
 from places_core.helpers import TagFilter
 from places_core.permissions import is_moderator
 from rest.permissions import IsOwnerOrReadOnly
 from userspace.models import UserProfile
 
-from .forms import UserItemForm, SimpleItemForm, LocationItemForm
-from .models import LocationGalleryItem, UserGalleryItem
+from .forms import ContentGalleryForm, UserItemForm, \
+                   SimpleItemForm, LocationItemForm, \
+                   PictureUploadForm, MassRemoveForm
+from .models import ContentObjectGallery, ContentObjectPicture, \
+                    LocationGalleryItem, UserGalleryItem
 from .serializers import UserMediaSerializer
 
 
@@ -121,8 +129,8 @@ class UserGalleryAPIViewSet(viewsets.ModelViewSet):
                 'message': _("Cannot create gallery"),
                 'level': 'danger',
             })
-        
-        username = request.user.username    
+
+        username = request.user.username
         filepath = os.path.join(settings.MEDIA_ROOT, username)
         image = Image.open(request.FILES.get('file'))
         filename = gallery_item_name()
@@ -131,15 +139,15 @@ class UserGalleryAPIViewSet(viewsets.ModelViewSet):
             image.thumbnail(settings.IMAGE_MAX_SIZE)
         image.save(os.path.join(filepath, filename), "JPEG")
         create_gallery_thumbnail(username, filename)
-        
+
         item = UserGalleryItem(
             user = request.user,
             picture_name = filename,
         )
         item.save()
-        
+
         serializer = self.serializer_class(item, context={'request':request})
-        
+
         return Response({
             'success': True,
             'message': _("File uploaded"),
@@ -156,7 +164,7 @@ class UserGalleryAPIViewSet(viewsets.ModelViewSet):
             })
 
         item = get_object_or_404(UserGallerItem, pk=pk)
-        
+
         try:
             item.delete()
         except Exception as ex:
@@ -210,7 +218,7 @@ class UserGalleryCreateView(FormView):
 
     def form_valid(self, form, **kwargs):
         create_gallery(self.request.user.username)
-        username = self.request.user.username    
+        username = self.request.user.username
         filepath = os.path.join(settings.MEDIA_ROOT, username)
         image = Image.open(form.cleaned_data['image'])
         filename = gallery_item_name()
@@ -219,7 +227,7 @@ class UserGalleryCreateView(FormView):
             image.thumbnail(settings.IMAGE_MAX_SIZE)
         image.save(os.path.join(filepath, filename), "JPEG")
         create_gallery_thumbnail(username, filename)
-        
+
         item = UserGalleryItem(
             user = self.request.user,
             picture_name = filename,
@@ -287,33 +295,25 @@ class ImageView(View):
 # Static views - location gallery
 # ------------------------------------------------------------------------------
 
-class LocationGalleryView(ListView):
+class LocationGalleryView(LocationContextMixin, SearchableListMixin):
     """ The main site of the location gallery. """
-    queryset = LocationGalleryItem.objects.all()
+    model = LocationGalleryItem
     template_name = 'gallery/location-gallery.html'
     context_object_name = 'files'
     paginate_by = settings.PLACE_GALLERY_LIMIT
 
-    def get_current_location(self):
-        location = get_object_or_404(Location, slug=self.kwargs['slug'])
-        return location
-
     def get_context_data(self, **kwargs):
+        location = get_object_or_404(Location, slug=self.kwargs.get('slug'))
         context = super(LocationGalleryView, self).get_context_data(**kwargs)
-        context['title'] = _("Gallery")
-        context['location'] = self.get_current_location()
-        context['links'] = links['gallery']
-        context['is_moderator'] = is_moderator(self.request.user, context['location'])
+        context.update({
+            'links': links['gallery'],
+            'location': location, })
         return context
-
-    def get_queryset(self):
-        location = self.get_current_location()
-        return LocationGalleryItem.objects.filter(location=location)
 
 
 class LocationGalleryCreateView(FormView):
     """
-    Allows to add new images to the gallery of a location. 
+    Allows to add new images to the gallery of a location.
     """
     form_class = LocationItemForm
     template_name = 'gallery/location-gallery-form.html'
@@ -343,7 +343,7 @@ class LocationGalleryCreateView(FormView):
             image.thumbnail(settings.IMAGE_MAX_SIZE)
         image.save(os.path.join(filepath, filename), "JPEG")
         create_gallery_thumbnail(username, filename)
-        
+
         item = LocationGalleryItem(
             user = self.request.user,
             picture_name = filename,
@@ -426,3 +426,118 @@ class PlacePictureView(DetailView):
         context['picture'] = self.get_object()
         context['links'] = links['gallery']
         return context
+
+
+class GalleryCreateView(CreateView):
+    """
+    Create new gallery - universal view. We expect user to be redirected
+    with proper `ct` and `pk` parameters matching model for which gallery will
+    be published. In other case stand-alone gallery will be created.
+    """
+    model = ContentObjectGallery
+    form_class = ContentGalleryForm
+
+    def get_initial(self):
+        initial = super(GalleryCreateView, self).get_initial()
+        try:
+            pk = int(self.kwargs.get('pk'))
+            ct = int(self.kwargs.get('ct'))
+        except (TypeError, ValueError):
+            # We assume that `published_in` sould be null
+            return initial
+        initial.update({'content_type': ct, 'object_id': pk, })
+        return initial
+
+
+class GalleryDeleteView(DeleteView):
+    """ Delete gallery.
+    """
+    model = ContentObjectGallery
+
+
+class GalleryDetailView(DetailView):
+    """ Show single gallery, most often used for stand-alone galleries.
+    """
+    model = ContentObjectGallery
+
+
+class MassDeleteView(SingleObjectMixin, View):
+    """ Select multiple items to delete.
+    """
+    model = ContentObjectGallery
+    template_name = 'gallery/mass_delete.html'
+    form_class = MassRemoveForm
+
+    def dispatch(self, *args, **kwargs):
+        self.object = self.get_object()
+        user = self.request.user
+        if user.is_anonymous():
+            raise Http404
+        return super(MassDeleteView, self).dispatch(*args, **kwargs)
+
+    def get(self, request, **kwargs):
+        context = super(MassDeleteView, self).get_context_data(**kwargs)
+        context['form'] = self.form_class(instance=self.object)
+        return render(request, self.template_name, context)
+
+    def post(self, request, **kwargs):
+        form = self.form_class(request.POST, instance=self.object)
+        context = super(MassDeleteView, self).get_context_data(**kwargs)
+        context['form'] = form
+        if form.is_valid():
+            msg = _(u"Selected images has been deleted")
+            messages.add_message(request, messages.SUCCESS, msg)
+            return redirect(self.object.get_absolute_url())
+        return render(request, self.template_name, context)
+
+
+class PictureDeleteView(DeleteView):
+    """ Delete single picture from gallery.
+    """
+    model = ContentObjectPicture
+
+    def get_success_url(self):
+        return self.object.gallery.get_absolute_url()
+
+
+class PictureDetailView(DetailView):
+    """ Show detailed info about selected gallery item.
+    """
+    model = ContentObjectPicture
+
+
+class PictureUploadView(SingleObjectMixin, View):
+    """ Universal view that allows us to upload picture to any gallery.
+    """
+    model = ContentObjectGallery
+    template_name = 'gallery/picture_form.html'
+    form_class = PictureUploadForm
+
+    def dispatch(self, *args, **kwargs):
+        user = self.request.user
+        if user.is_anonymous():
+            raise Http404
+        self.object = self.get_object()
+        return super(PictureUploadView, self).dispatch(*args, **kwargs)
+
+    def get_initial(self):
+        return {'gallery': self.get_object(), }
+
+    def get(self, request, **kwargs):
+        context = super(PictureUploadView, self).get_context_data(**kwargs)
+        context['form'] = self.form_class(initial=self.get_initial())
+        return render(request, self.template_name, context)
+
+    def post(self, request, **kwargs):
+        form = self.form_class(request.POST, request.FILES)
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.uploaded_by = request.user
+            obj.save()
+            return redirect(obj.gallery.get_absolute_url())
+        if request.is_ajax():
+            context = json.dumps(form.errors)
+            return HttpResponse(context, content_type="application/json")
+        context = super(PictureUploadView, self).get_context_data(**kwargs)
+        context['form'] = form
+        return render(request, self.template_name, context)

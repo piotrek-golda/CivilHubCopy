@@ -1,0 +1,60 @@
+{% extends 'locations/index.html' %}{% load i18n %}
+{% block content %}<div class="col-sm-12 main-content">
+  {% if object.category %}<div class="guides-category c_usd"><h2 class="mt0 mb0 text-center"><a href="{% url 'guides:list-filter-category' object.location.slug object.category.pk %}">{{ object.category }}</a></h2>
+    <div class="icon c_usd"><span class="fa fa-usd"></span></div>
+  </div>
+{% endif %}{% if guide_access %}<p><span class="submenu-toggle mt0"></p>{% endif %}
+  <div class="entry-submenu">
+    <ul>
+      <li><a href="{% url 'guides:update' object.location.slug object.slug %}">{% trans "Update" %}</a></li>
+      <li><a href="{% url 'guides:delete' object.location.slug object.slug %}">{% trans "Delete" %}</a></li>
+      <li><a href="{% url 'guides:editors' object.location.slug object.slug %}">{% trans "Editors" %}</a></li>
+    </ul>
+  </div>
+<div class="container-fluid p-reset">
+  <div class="col-sm-3 ac-right-site">
+    <div class="menu-box bbg">
+      <h3>{% trans "Authors" %}</h3>
+      <ul class="list-unstyled">{% for author in object.authors.all %}
+        <li class="icon-list top15"><img src="{{ author.profile.avatar.url }}" alt="{{ author.profile }}" class="current-user-avatar60 display-ib-m">
+          <div class="display-ib-m"><a href="{{ author.profile.get_absolute_url }}" class="author btn-block">{{ author.profile }}</a>
+          <a href="" class="btn-block mt0"><small>Organizacja</small></a></div>
+        </li>
+      {% endfor %}</ul>
+    </div>
+    {% if object.tags.count %}<div class="menu-box tags-n bbg">
+      <h3>{% trans "Tags" %}</h3>
+      <ul class="list-unstyled">{% for tag in object.tags.all %}
+        <li class="tag-entry tag-n"><a href="{% url 'guides:list-filter-tag' guide.location.slug tag.pk %}">#{{ tag }}</a></li>
+      {% endfor %}</ul>
+    </div>{% endif %}
+  </div>
+  <div class="col-sm-9">
+    <h1>{{ object }}</h1>
+    <div class="acticle-content clearfix">{{ object.content|safe }}</div>
+  </div>
+</div>
+</div>
+
+{% comment %}
+<h1>{{ object }}</h1>
+{% if guide_access %}<ul>
+  <li><a href="{% url 'guides:update' object.location.slug object.slug %}">{% trans "Update" %}</a></li>
+  <li><a href="{% url 'guides:delete' object.location.slug object.slug %}">{% trans "Delete" %}</a></li>
+  <li><a href="{% url 'guides:editors' object.location.slug object.slug %}">{% trans "Editors" %}</a></li>
+</ul>{% endif %}
+<p>{% trans "Created" %} {{ guide.created_at|timesince }} {% trans "ago" %}</p>
+{% if object.category %}<p>
+  {% trans "Category" %}: <a href="{% url 'guides:list-filter-category' object.location.slug object.category.pk %}">{{ object.category }}</a>
+</p>{% endif %}
+<div>{{ object.content|safe }}</div>
+{% if object.tags.count %}<p>
+  {% trans "Tags" %}: {% for tag in object.tags.all %}<a href="{% url 'guides:list-filter-tag' guide.location.slug tag.pk %}">#{{ tag }}</a> {% endfor %}
+</p>{% endif %}
+<p>{% trans "Authors" %}:</p>
+<ul>{% for author in object.authors.all %}
+  <li><a href="{{ author.profile.get_absolute_url }}">{{ author.profile }}</a></li>
+{% endfor %}</ul>
+{% endcomment %}
+
+{% endblock %}

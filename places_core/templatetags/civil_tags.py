@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-import os, json
+import json
+import os
 
 from django.template import Library
 from django.conf import settings
@@ -8,13 +9,19 @@ from django.utils.translation import get_language
 from django.utils.safestring import mark_safe
 from django.contrib.contenttypes.models import ContentType
 
+from rest_framework.renderers import JSONRenderer
 from social.apps.django_app.default.models import UserSocialAuth
 
 from maps.models import MapPointer
+from userspace.serializers import UserDetailSerializer
 
 
 register = Library()
-ALLOWABLE_VALUES = ("DEBUG", "COMMENT_PAGINATOR_LIMIT",)
+ALLOWABLE_VALUES = (
+    "DEBUG",
+    "COMMENT_PAGINATOR_LIMIT",
+    "SOCIAL_AUTH_FACEBOOK_KEY",
+)
 
 
 @register.filter
@@ -40,6 +47,18 @@ def js_path():
     if settings.DEBUG:
         return 'src'
     return 'dist'
+
+
+@register.simple_tag
+def module_path(module='default'):
+    """ Return path to given js module. Use for require.js
+    """
+    from django.templatetags.static import static
+    url = 'dist'
+    if settings.DEBUG:
+        url = 'src'
+    return static('places_core/js/%s/%s.js' %(url, module))
+
 
 
 @register.simple_tag
@@ -192,3 +211,24 @@ def report_link(obj):
     ct = ContentType.objects.get_for_model(obj)
     return '<a href="#" class="abuse-link" data-ct="{}" data-pk="{}">{}</a>'\
         .format(ct.pk, obj.pk, _(u"Report abuse"))
+
+
+@register.simple_tag
+def get_verbose_name(object):
+    return object._meta.verbose_name.title()
+
+
+@register.simple_tag(takes_context=True)
+def js_userdata(context):
+    """
+    This tag is very useful for passing data of logged-in user into javascript
+    context. It presents vital user info in common JSON syntax.
+    """
+    user = context['user']
+
+    if user.is_anonymous():
+        return ""
+
+    serializer = UserDetailSerializer(user)
+
+    return JSONRenderer().render(serializer.data)

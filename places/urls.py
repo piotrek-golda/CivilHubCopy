@@ -6,7 +6,8 @@ from staticpages.views import PageView, HomeView
 from userspace.views import UserActivityView
 from places_core.views import FileServeView
 admin.autodiscover()
-# include action hooks globally
+
+from civmail.admin import civmail_admin_site
 from places_core import actstreams
 
 # djangorestframework
@@ -50,6 +51,7 @@ sitemaps = {
     'articles': sitemaps.ArticleSitemap,
     'documents': sitemaps.EtherpadSitemap,
     'organizations': sitemaps.OrganizationSitemap,
+    'guides': sitemaps.GuideSitemap,
 }
 # Javascript translations catalog
 js_info_dict = {
@@ -76,6 +78,7 @@ from places_core.urls import router as core_router
 from gallery.urls import router as gallery_router
 from notifications.urls import router as notification_router
 from activities.urls import router as activity_router
+from hitcounter.urls import router as hitcounter_router
 urlpatterns = patterns('',
     url(r'^api-ideas/', include(idea_router.urls)),
     url(r'^api-locations/', include(location_router.urls)),
@@ -87,16 +90,19 @@ urlpatterns = patterns('',
     url(r'^api-gallery/', include(gallery_router.urls)),
     url(r'^api-notifications/', include(notification_router.urls)),
     url(r'^api-activities/', include(activity_router.urls)),
+    url(r'^api-hitcounter/', include(hitcounter_router.urls)),
 )
 
-from civmail.views import InviteFriendsView
+from civmail.views import ContactEmailView, InviteFriendsView
 urlpatterns += patterns('',
+    url(r'^contact/', ContactEmailView.as_view(), name="contact"),
     url(r'^invite-friends/', InviteFriendsView.as_view(), name="invite_friends"),
 )
 
 from places_core.views import set_language
 urlpatterns += patterns('',
     url(r'^', include('hitcounter.urls')),
+    url(r'^guides/', include('guides.urls', namespace="guides")),
     url(r'^organizations/', include('organizations.urls', namespace="organizations")),
     url(r'^simpleblog/', include('simpleblog.urls', namespace="simpleblog")),
     # user account
@@ -105,6 +111,7 @@ urlpatterns += patterns('',
     url(r'^bookmarks/', include('bookmarks.urls')),
     # Email app
     url(r'^civmail/', include('civmail.urls', namespace='civmail')),
+    url(r'^civmail-admin/', include(civmail_admin_site.urls)),
     # Maps
     url(r'^maps/', include('maps.urls', namespace='maps')),
     # blog
@@ -156,6 +163,15 @@ urlpatterns += patterns('',
     # copy-paste method.
     url(r'^home/', PageView.as_view(page='home')),
     url(r'^home-b/', PageView.as_view(page='home-b')),
+    url(r'^home-c/', PageView.as_view(page='home-c')),
+    url(r'^home-d/', PageView.as_view(page='home-d')),
+    url(r'^home-e/', PageView.as_view(page='home-e')),
+    url(r'^home-f/', PageView.as_view(page='home-f')),
+    url(r'^home-g/', PageView.as_view(page='home-g')),
+    url(r'^home-h/', PageView.as_view(page='home-h')),
+    url(r'^home-i/', PageView.as_view(page='home-i')),
+    url(r'^home-j/', PageView.as_view(page='home-j')),
+
     #url(r'^about/', PageView.as_view(page='about')),
     #url(r'^privacy/', PageView.as_view(page='privacy')),
     #url(r'^terms/', PageView.as_view(page='terms')),
